@@ -1,3 +1,8 @@
+import 'package:csb_2025_firebase/pages/guard.dart';
+import 'package:csb_2025_firebase/pages/home.dart';
+import 'package:csb_2025_firebase/pages/restricted.dart';
+import 'package:csb_2025_firebase/pages/sign-in.dart';
+import 'package:csb_2025_firebase/pages/sign-up.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +19,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => GuardWidget(protected: false, child: HomePage()),
+        '/sign-in': (context) => GuardWidget(protected: false, child: SignInPage()),
+        '/sign-up': (context) => GuardWidget(protected: false, child: SignUpPage()),
+        '/restricted': (context) => GuardWidget(protected: true, child: RestrictedPage()),
+      },
     );
   }
 }

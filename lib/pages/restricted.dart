@@ -8,8 +8,7 @@ class RestrictedPage extends StatefulWidget {
   State<RestrictedPage> createState() => _RestrictedPageState();
 }
 
-class _RestrictedPageState extends State<RestrictedPage> {
-  bool _redirectingToSignIn = false;
+class _RestrictedPageState extends State<RestrictedPage> {  
 
   Future<void> logOut() async {
     await FirebaseAuth.instance.signOut();

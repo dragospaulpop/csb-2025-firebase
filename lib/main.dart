@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
       routes: {
         '/': (context) => GuardWidget(protected: false, child: HomePage()),
         '/sign-in': (context) => GuardWidget(protected: false, child: SignInPage()),
-        '/sign-up': (context) => GuardWidget(protected: false, child: SignUpPage()),
+        '/sign-up': (context) => SignUpPage(),
         '/restricted': (context) => GuardWidget(protected: true, child: RestrictedPage()),
       },
     );

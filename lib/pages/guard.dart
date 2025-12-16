@@ -19,6 +19,13 @@ class GuardWidgetState extends State<GuardWidget> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        final route = ModalRoute.of(context)?.settings.name;
+        final isSignUpRoute = route == '/sign-up';
+
+        // if (route == '/sign-up' && snapshot.data != null) {
+        //   return widget.child;   
+        // }
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -43,7 +50,7 @@ class GuardWidgetState extends State<GuardWidget> {
 
             return const Scaffold(body: Center(child: Text('Redirecting...')));
           } else {
-            String? route = ModalRoute.of(context)?.settings.name;
+            
             
             if (route == '/sign-in' || route == '/sign-up') {
               return widget.child;   
@@ -65,11 +72,14 @@ class GuardWidgetState extends State<GuardWidget> {
           }
         }
 
-        
-        
+
         if (widget.protected) {
           return widget.child;   
         } else {
+          // Let the sign-up page finish any post-sign-up work (e.g. creating a
+          // Firestore user document) before redirecting away.
+          if (isSignUpRoute) return widget.child;
+
           if (!_redirectingToSignIn) {
             _redirectingToSignIn = true;
             WidgetsBinding.instance.addPostFrameCallback((_) {

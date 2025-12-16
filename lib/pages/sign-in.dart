@@ -12,6 +12,7 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -21,6 +22,9 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> signIn() async {
+    if (_isSubmitting) return;
+    setState(() => _isSubmitting = true);
+
     String? message;
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -31,14 +35,14 @@ class _SignInPageState extends State<SignInPage> {
       message = e.message;
     } catch (e) {
       message = e.toString();
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
 
     if (!mounted) return;
     if (message != null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
-    } else {
-      Navigator.pushNamed(context, '/restricted');
     }
   }
 
@@ -77,12 +81,20 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    signIn();
-                  }
-                },
-                child: const Text('Sign In'),
+                onPressed: _isSubmitting
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          signIn();
+                        }
+                      },
+                child: _isSubmitting
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Sign In'),
               ),
               TextButton(onPressed: () => Navigator.pushNamed(context, '/sign-up'), child: const Text('Sign Up'))
             ],
